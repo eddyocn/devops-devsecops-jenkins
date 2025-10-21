@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Preparando ambiente...'
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Executando testes automatizados...'
+                sh 'pytest --maxfail=1 --disable-warnings -q'
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo 'Verificando vulnerabilidades com Bandit...'
+                sh 'bandit -r . || true'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Simulando deploy do sistema...'
+                sh 'echo "Aplicação validada e enviada com sucesso!"'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Pipeline finalizado com sucesso!'
+        }
+        failure {
+            echo '❌ Pipeline falhou. Corrija o erro antes do deploy.'
+        }
+    }
+}
